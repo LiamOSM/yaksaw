@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<!-- the title is shown as a label on the browser tab -->
+<title>YAKSAW!!!</title>
+
+<script language="javascript" type="text/javascript">
+
+var url = "ws://192.168.4.1:1024/";
+var output;
+var startButton;
+var stopButton
+var slider;
+
+// This is called when the page finishes loading
+function init() {
+
+    // Assign page elements to variables
+    slider = document.getElementById("slider");
+    startButton = document.getElementById("startButton");
+    stopButton = document.getElementById("stopButton");
+    output = document.getElementById("output");
+    speed_field.innerHTML = slider.value;
+
+    // Connect to WebSocket server
+    wsConnect(url);
+}
+
+// Call this to connect to the WebSocket server
+function wsConnect(url) {
+
+    // Connect to WebSocket server
+    websocket = new WebSocket(url);
+
+    // Assign callbacks
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+}
+
+// Called when a WebSocket connection is established with the server
+function onOpen(evt) {
+
+    // Enable start button
+    startButton.disabled = false;
+
+}
+
+// Called when the WebSocket connection is closed
+function onClose(evt) {
+
+    // Disable buttons
+    startButton.disabled = true;
+    stopButton.disabled = true;
+
+    // Try to reconnect after a few seconds
+    setTimeout(function() { wsConnect(url) }, 2000);
+}
+
+// Called when a WebSocket error occurs
+function onError(evt) {
+
+}
+
+// Sends a message to the server (and prints it to the console)
+function doSend(message) {
+    websocket.send(message);
+}
+
+// Called whenever the START button is pressed
+function start() {
+    doSend("on");
+    startButton.disabled = true;
+    stopButton.disabled = false;
+}
+
+function stop() {
+    doSend("off");
+    stopButton.disabled = true;
+    startButton.disabled = false;
+}
+
+function onSlide(){
+  var speed = slider.value.toString();
+  speed_field.innerHTML = slider.value;
+  doSend("S"+speed);
+}
+
+
+// Call the init function as soon as the page loads
+window.addEventListener("load", init, false);
+
+</script>
+
+
+<!-- The actual webpage HTML is below -->
+
+<center>
+<h2>Pneumatic Hacksaw</h2>
+<input id="slider" type="range" min="1" max="100" step="1" oninput="onSlide()" value="50">
+<br>
+<center>Speed: <span id="speed_field"></span></center>
+<br>
+<button id="startButton" onclick="start()" disabled>START</button>
+<button id="stopButton" onclick="stop()" disabled>STOP</button>
+</center>
