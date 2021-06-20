@@ -4,8 +4,8 @@
 #include <WebSocketsServer.h>
 
 // Constants
-const char *ssid = "HACKSAW!!!";
-const char *password =  "123456789";
+const char *ssid = "AIRSAW!!!";
+const char *password =  "42069420";
 const int dns_port = 53;
 const int http_port = 80;
 const int ws_port = 1024;
